@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="text-2xl font-bold mb-6">ダッシュボード</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-white rounded-lg shadow p-6 text-center">
+        <p class="text-gray-500 mb-2">回答数</p>
+        <p class="text-4xl font-bold text-blue-600">{{ total }}</p>
+    </div>
+    <div class="bg-white rounded-lg shadow p-6 text-center">
+        <p class="text-gray-500 mb-2">正解数</p>
+        <p class="text-4xl font-bold text-green-600">{{ correct }}</p>
+    </div>
+    <div class="bg-white rounded-lg shadow p-6 text-center">
+        <p class="text-gray-500 mb-2">正解率</p>
+        <p class="text-4xl font-bold text-purple-600">{{ accuracy }}%</p>
+    </div>
+</div>
+<div class="text-center">
+    <a href="/study" class="bg-blue-600 text-white px-8 py-3 rounded-lg text-lg hover:bg-blue-700">学習を始める</a>
+</div>
+{% endblock %}
+
