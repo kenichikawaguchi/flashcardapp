@@ -2,23 +2,13 @@
 {% block content %}
 <div class="max-w-md mx-auto bg-white rounded-lg shadow p-8">
     <h2 class="text-2xl font-bold mb-6 text-center">新規登録</h2>
-    <div>
-        <input name="username" type="text" placeholder="ユーザー名" class="w-full border rounded px-4 py-2 mb-4" id="username">
-        <input name="email" type="email" placeholder="メールアドレス" class="w-full border rounded px-4 py-2 mb-4" id="email">
-        <input name="password" type="password" placeholder="パスワード" class="w-full border rounded px-4 py-2 mb-6" id="password">
-        <button onclick="submitRegister()" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">登録する</button>
-    </div>
+    <form method="POST" action="/register">
+        <input name="username" type="text" placeholder="ユーザー名" class="w-full border rounded px-4 py-2 mb-4">
+        <input name="email" type="email" placeholder="メールアドレス" class="w-full border rounded px-4 py-2 mb-4">
+        <input name="password" type="password" placeholder="パスワード" class="w-full border rounded px-4 py-2 mb-6">
+        <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">登録する</button>
+    </form>
     <p class="text-center mt-4 text-gray-600">すでにアカウントをお持ちの方は<a href="/login" class="text-blue-600 hover:underline">こちら</a></p>
 </div>
-<script>
-function submitRegister() {
-    const data = new FormData();
-    data.append('username', document.getElementById('username').value);
-    data.append('email', document.getElementById('email').value);
-    data.append('password', document.getElementById('password').value);
-    fetch('/register', { method: 'POST', body: data })
-        .then(r => r.redirected ? window.location = r.url : r.text())
-}
-</script>
 {% endblock %}
 
