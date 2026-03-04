@@ -6,6 +6,8 @@ from app.models import User, Question, UserProgress
 from sqlalchemy import func
 from itsdangerous import URLSafeTimedSerializer
 import resend
+from datetime import date, timedelta
+
 
 main = Blueprint('main', __name__)
 
@@ -98,7 +100,7 @@ def dashboard():
     total = UserProgress.query.filter_by(user_id=current_user.id).count()
     correct = UserProgress.query.filter_by(user_id=current_user.id, is_correct=True).count()
     accuracy = round(correct / total * 100) if total > 0 else 0
-    return render_template('dashboard.html', total=total, correct=correct, accuracy=accuracy)
+    return render_template('dashboard.html', total=total, correct=correct, accuracy=accuracy, streak=current_user.streak)
 
 @main.route('/study')
 @login_required
@@ -113,6 +115,15 @@ def answer():
     is_correct = request.form['is_correct'] == 'true'
     progress = UserProgress(user_id=current_user.id, question_id=question_id, is_correct=is_correct)
     db.session.add(progress)
+
+    today = date.today()
+    if current_user.last_study_date != today:
+        if current_user.last_study_date == today - timedelta(days=1):
+            current_user.streak += 1
+        else:
+            current_user.streak = 1
+        current_user.last_study_date = today
+
     db.session.commit()
     return redirect(url_for('main.study'))
 
