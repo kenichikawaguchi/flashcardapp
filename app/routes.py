@@ -103,7 +103,20 @@ def dashboard():
     total = UserProgress.query.filter_by(user_id=current_user.id).count()
     correct = UserProgress.query.filter_by(user_id=current_user.id, is_correct=True).count()
     accuracy = round(correct / total * 100) if total > 0 else 0
-    return render_template('dashboard.html', total=total, correct=correct, accuracy=accuracy, streak=current_user.streak)
+    # 分野別問題数
+    category_counts = db.session.query(
+        Question.category,
+        func.count(Question.id)
+    ).group_by(Question.category).order_by(Question.category).all()
+
+    return render_template('dashboard.html',
+        total=total,
+        correct=correct,
+        accuracy=accuracy,
+        streak=current_user.streak,
+        category_counts=category_counts
+    )
+
 @main.route('/study')
 
 @login_required
