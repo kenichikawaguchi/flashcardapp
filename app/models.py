@@ -22,6 +22,7 @@ class Question(db.Model):
     question_text = db.Column(db.Text, nullable=False)
     answer_text = db.Column(db.Text, nullable=False)
     explanation = db.Column(db.Text, nullable=True)
+    choices = db.Column(db.Text, nullable=True)
 
 class UserProgress(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -5,32 +5,57 @@
     <div class="bg-white rounded-lg shadow p-8 mb-6">
         <p class="text-sm text-gray-500 mb-2">カテゴリ：{{ question.category }}</p>
         <p class="text-xl font-bold text-gray-800 mb-6">{{ question.question_text }}</p>
-        <div id="answer-area" class="hidden">
-            <div class="bg-green-50 border border-green-200 rounded p-4 mb-4">
-                <p class="font-bold text-green-800 mb-2">答え：</p>
-                <p class="text-gray-800">{{ question.answer_text }}</p>
+
+        {% if not answered %}
+        <form method="POST" action="/answer">
+            <input type="hidden" name="question_id" value="{{ question.id }}">
+            {% for choice in choices %}
+                <input type="hidden" name="choices_order" value="{{ choice }}">
+            {% endfor %}
+            <div class="space-y-3">
+                {% for choice in choices %}
+                <button type="submit" name="selected" value="{{ choice }}"
+                    class="w-full text-left border-2 border-gray-200 rounded-lg px-4 py-3 hover:border-blue-400 hover:bg-blue-50 transition">
+                    {{ loop.index }}. {{ choice }}
+                </button>
+                {% endfor %}
             </div>
-            {% if question.explanation %}
-            <div class="bg-blue-50 border border-blue-200 rounded p-4 mb-6">
-                <p class="font-bold text-blue-800 mb-2">解説：</p>
-                <p class="text-gray-800">{{ question.explanation }}</p>
+        </form>
+
+        {% else %}
+        <!-- デバッグ -->
+        <p class="text-xs text-gray-400">順序: {{ choices | join(', ') }}</p>
+        <div class="space-y-3 mb-6">
+            {% for choice in choices %}
+            <div class="w-full text-left border-2 rounded-lg px-4 py-3
+                {% if choice == question.answer_text %}
+                    border-green-500 bg-green-50
+                {% elif choice == selected %}
+                    border-red-500 bg-red-50
+                {% else %}
+                    border-gray-200
+                {% endif %}">
+                {{ loop.index }}. {{ choice }}
+                {% if choice == question.answer_text %}
+                    <span class="ml-2 text-green-600 font-bold">✓ 正解</span>
+                {% elif choice == selected %}
+                    <span class="ml-2 text-red-600 font-bold">✗ あなたの回答</span>
+                {% endif %}
             </div>
-            {% endif %}
-            <div class="flex space-x-4">
-                <form method="POST" action="/answer" class="flex-1">
-                    <input type="hidden" name="question_id" value="{{ question.id }}">
-                    <input type="hidden" name="is_correct" value="true">
-                    <button type="submit" class="w-full bg-green-500 text-white py-3 rounded-lg hover:bg-green-600">⭕ 正解だった</button>
-                </form>
-                <form method="POST" action="/answer" class="flex-1">
-                    <input type="hidden" name="question_id" value="{{ question.id }}">
-                    <input type="hidden" name="is_correct" value="false">
-                    <button type="submit" class="w-full bg-red-500 text-white py-3 rounded-lg hover:bg-red-600">❌ 不正解だった</button>
-                </form>
-            </div>
+            {% endfor %}
         </div>
-        <button id="show-answer" onclick="document.getElementById('answer-area').classList.remove('hidden'); this.classList.add('hidden');"
-            class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">答えを見る</button>
+
+        {% if question.explanation %}
+        <div class="bg-blue-50 border border-blue-200 rounded p-4 mb-6">
+            <p class="font-bold text-blue-800 mb-2">解説：</p>
+            <p class="text-gray-800">{{ question.explanation }}</p>
+        </div>
+        {% endif %}
+
+        <a href="/study" class="block w-full text-center bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">
+            次の問題へ
+        </a>
+        {% endif %}
     </div>
     {% else %}
     <div class="text-center py-20">

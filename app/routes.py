@@ -1,3 +1,6 @@
+import json
+import random
+
 from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -101,21 +104,29 @@ def dashboard():
     correct = UserProgress.query.filter_by(user_id=current_user.id, is_correct=True).count()
     accuracy = round(correct / total * 100) if total > 0 else 0
     return render_template('dashboard.html', total=total, correct=correct, accuracy=accuracy, streak=current_user.streak)
-
 @main.route('/study')
+
 @login_required
 def study():
     question = Question.query.order_by(func.random()).first()
-    return render_template('study.html', question=question)
+    choices = json.loads(question.choices) if question and question.choices else []
+    random.shuffle(choices)
+    return render_template('study.html', question=question, choices=choices, answered=False)
 
 @main.route('/answer', methods=['POST'])
 @login_required
 def answer():
     question_id = request.form['question_id']
-    is_correct = request.form['is_correct'] == 'true'
+    selected = request.form['selected']
+    choices = request.form.getlist('choices_order')
+    print('choices_order:', choices)
+    question = Question.query.get(int(question_id))
+    is_correct = selected == question.answer_text
+
     progress = UserProgress(user_id=current_user.id, question_id=question_id, is_correct=is_correct)
     db.session.add(progress)
 
+    # ストリーク更新
     today = date.today()
     if current_user.last_study_date != today:
         if current_user.last_study_date == today - timedelta(days=1):
@@ -125,5 +136,6 @@ def answer():
         current_user.last_study_date = today
 
     db.session.commit()
-    return redirect(url_for('main.study'))
+
+    return render_template('study.html', question=question, choices=choices, answered=True, selected=selected)
 
