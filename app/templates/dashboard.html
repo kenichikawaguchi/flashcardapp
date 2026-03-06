@@ -19,29 +19,52 @@
         <p class="text-4xl font-bold text-orange-500">{{ streak }}日</p>
     </div>
 </div>
+
 <div class="bg-white rounded-lg shadow p-6 mb-8">
-    <h3 class="text-lg font-bold text-gray-800 mb-4">📚 分野別問題数</h3>
+    <h3 class="text-lg font-bold text-gray-800 mb-4">📚 分野別統計</h3>
     <table class="w-full">
         <thead>
             <tr class="border-b-2 border-gray-200">
                 <th class="text-left py-2 px-4 text-gray-600">分野</th>
                 <th class="text-right py-2 px-4 text-gray-600">問題数</th>
+                <th class="text-right py-2 px-4 text-gray-600">回答数</th>
+                <th class="text-right py-2 px-4 text-gray-600">正答数</th>
+                <th class="text-right py-2 px-4 text-gray-600">正解率</th>
             </tr>
         </thead>
         <tbody>
             {% for category, count in category_counts %}
+            {% set stats = category_stats_map.get(category, {}) %}
             <tr class="border-b border-gray-100 hover:bg-gray-50">
-                <td class="py-2 px-4 text-gray-800">{{ category }}</td>
+                <td class="py-2 px-4 text-gray-800">
+                    <a href="/study/category/{{ category }}" class="text-blue-600 hover:underline">{{ category }}</a>
+                </td>
                 <td class="py-2 px-4 text-right font-bold text-blue-600">{{ count }}問</td>
+                <td class="py-2 px-4 text-right text-gray-700">{{ stats.get('total', 0) }}</td>
+                <td class="py-2 px-4 text-right text-gray-700">{{ stats.get('correct', 0) }}</td>
+                <td class="py-2 px-4 text-right">
+                    {% if stats.get('total', 0) > 0 %}
+                        {% set acc = stats.get('accuracy') %}
+                        <span class="font-bold
+                            {% if acc >= 80 %}text-green-600
+                            {% elif acc >= 50 %}text-yellow-600
+                            {% else %}text-red-600{% endif %}">
+                            {{ acc }}%
+                        </span>
+                    {% else %}
+                        <span class="text-gray-400">未回答</span>
+                    {% endif %}
+                </td>
             </tr>
             {% endfor %}
         </tbody>
         <tfoot>
             <tr class="border-t-2 border-gray-200">
                 <td class="py-2 px-4 font-bold text-gray-800">合計</td>
-                <td class="py-2 px-4 text-right font-bold text-blue-600">
-                    {{ category_counts | sum(attribute=1) }}問
-                </td>
+                <td class="py-2 px-4 text-right font-bold text-blue-600">{{ category_counts | sum(attribute=1) }}問</td>
+                <td class="py-2 px-4 text-right font-bold text-gray-700">{{ total }}</td>
+                <td class="py-2 px-4 text-right font-bold text-gray-700">{{ correct }}</td>
+                <td class="py-2 px-4 text-right font-bold text-purple-600">{{ accuracy }}%</td>
             </tr>
         </tfoot>
     </table>

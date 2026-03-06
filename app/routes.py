@@ -103,19 +103,42 @@ def dashboard():
     total = UserProgress.query.filter_by(user_id=current_user.id).count()
     correct = UserProgress.query.filter_by(user_id=current_user.id, is_correct=True).count()
     accuracy = round(correct / total * 100) if total > 0 else 0
+
     # 分野別問題数
     category_counts = db.session.query(
         Question.category,
         func.count(Question.id)
     ).group_by(Question.category).order_by(Question.category).all()
 
+    # 分野別統計
+    category_stats_raw = db.session.query(
+        Question.category,
+        func.count(UserProgress.id),
+        func.sum(func.cast(UserProgress.is_correct, db.Integer))
+    ).join(UserProgress, Question.id == UserProgress.question_id)\
+     .filter(UserProgress.user_id == current_user.id)\
+     .group_by(Question.category)\
+     .order_by(Question.category)\
+     .all()
+
+    category_stats_map = {
+        cat: {
+            'total': total_count,
+            'correct': correct_count or 0,
+            'accuracy': round((correct_count or 0) / total_count * 100) if total_count > 0 else 0
+        }
+        for cat, total_count, correct_count in category_stats_raw
+    }
+
     return render_template('dashboard.html',
         total=total,
         correct=correct,
         accuracy=accuracy,
         streak=current_user.streak,
-        category_counts=category_counts
+        category_counts=category_counts,
+        category_stats_map=category_stats_map
     )
+
 
 @main.route('/study')
 
@@ -132,14 +155,13 @@ def answer():
     question_id = request.form['question_id']
     selected = request.form['selected']
     choices = request.form.getlist('choices_order')
-    print('choices_order:', choices)
+    category = request.form.get('category', '')
     question = Question.query.get(int(question_id))
     is_correct = selected == question.answer_text
 
     progress = UserProgress(user_id=current_user.id, question_id=question_id, is_correct=is_correct)
     db.session.add(progress)
 
-    # ストリーク更新
     today = date.today()
     if current_user.last_study_date != today:
         if current_user.last_study_date == today - timedelta(days=1):
@@ -149,6 +171,13 @@ def answer():
         current_user.last_study_date = today
 
     db.session.commit()
+    return render_template('study.html', question=question, choices=choices, answered=True, selected=selected, category=category)
 
-    return render_template('study.html', question=question, choices=choices, answered=True, selected=selected)
+@main.route('/study/category/<category>')
+@login_required
+def study_by_category(category):
+    question = Question.query.filter_by(category=category).order_by(func.random()).first()
+    choices = json.loads(question.choices) if question and question.choices else []
+    random.shuffle(choices)
+    return render_template('study.html', question=question, choices=choices, answered=False, category=category)
 
