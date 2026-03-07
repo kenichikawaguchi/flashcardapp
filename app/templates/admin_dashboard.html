@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-5xl mx-auto">
+    <h2 class="text-2xl font-bold mb-6">🛠️ 管理者ダッシュボード</h2>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white rounded-lg shadow p-6 text-center">
+            <p class="text-gray-500 mb-2">総ユーザー数</p>
+            <p class="text-4xl font-bold text-blue-600">{{ total_users }}</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6 text-center">
+            <p class="text-gray-500 mb-2">認証済みユーザー</p>
+            <p class="text-4xl font-bold text-green-600">{{ verified_users }}</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6 text-center">
+            <p class="text-gray-500 mb-2">総問題数</p>
+            <p class="text-4xl font-bold text-purple-600">{{ total_questions }}</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6 text-center">
+            <p class="text-gray-500 mb-2">総回答数</p>
+            <p class="text-4xl font-bold text-orange-500">{{ total_answers }}</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-bold mb-4">📚 分野別問題数</h3>
+            <table class="w-full">
+                {% for category, count in category_counts %}
+                <tr class="border-b border-gray-100">
+                    <td class="py-2 text-gray-700">{{ category }}</td>
+                    <td class="py-2 text-right font-bold text-blue-600">{{ count }}問</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-bold mb-4">🔗 クイックリンク</h3>
+            <div class="space-y-3">
+                <a href="/admin/questions" class="block bg-blue-50 hover:bg-blue-100 text-blue-700 px-4 py-3 rounded-lg">📝 問題管理</a>
+                <a href="/admin/questions/new" class="block bg-green-50 hover:bg-green-100 text-green-700 px-4 py-3 rounded-lg">➕ 問題追加</a>
+                <a href="/admin/users" class="block bg-purple-50 hover:bg-purple-100 text-purple-700 px-4 py-3 rounded-lg">👥 ユーザー管理</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

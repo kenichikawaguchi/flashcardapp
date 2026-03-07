@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <h2 class="text-2xl font-bold mb-6">{% if question %}問題を編集{% else %}問題を追加{% endif %}</h2>
+
+    <div class="bg-white rounded-lg shadow p-8">
+        <form method="POST">
+            <div class="mb-4">
+                <label class="block text-gray-700 font-bold mb-2">分野</label>
+                <input type="text" name="category" list="categories"
+                    value="{{ question.category if question else '' }}"
+                    class="w-full border rounded-lg px-3 py-2" required>
+                <datalist id="categories">
+                    {% for cat in categories %}
+                    <option value="{{ cat }}">
+                    {% endfor %}
+                </datalist>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 font-bold mb-2">問題文</label>
+                <textarea name="question_text" rows="3"
+                    class="w-full border rounded-lg px-3 py-2" required>{{ question.question_text if question else '' }}</textarea>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 font-bold mb-2">選択肢</label>
+                {% for i in range(1, 5) %}
+                <input type="text" name="choice{{ i }}"
+                    value="{{ choices[i-1] if choices is defined and choices else '' }}"
+                    placeholder="選択肢{{ i }}"
+                    class="w-full border rounded-lg px-3 py-2 mb-2" required>
+                {% endfor %}
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 font-bold mb-2">正解（選択肢と完全一致）</label>
+                <input type="text" name="answer_text"
+                    value="{{ question.answer_text if question else '' }}"
+                    class="w-full border rounded-lg px-3 py-2" required>
+            </div>
+            <div class="mb-6">
+                <label class="block text-gray-700 font-bold mb-2">解説</label>
+                <textarea name="explanation" rows="3"
+                    class="w-full border rounded-lg px-3 py-2">{{ question.explanation if question else '' }}</textarea>
+            </div>
+            <div class="flex gap-4">
+                <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                    {% if question %}更新する{% else %}追加する{% endif %}
+                </button>
+                <a href="/admin/questions" class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300">
+                    キャンセル
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

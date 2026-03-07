@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold">📝 問題管理</h2>
+        <a href="/admin/questions/new" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">➕ 問題追加</a>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded mb-4">
+        {{ messages[0] }}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+        <table class="w-full">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="text-left py-3 px-4 text-gray-600">ID</th>
+                    <th class="text-left py-3 px-4 text-gray-600">分野</th>
+                    <th class="text-left py-3 px-4 text-gray-600">問題文</th>
+                    <th class="text-left py-3 px-4 text-gray-600">正解</th>
+                    <th class="text-center py-3 px-4 text-gray-600">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for q in questions %}
+                <tr class="border-b border-gray-100 hover:bg-gray-50">
+                    <td class="py-3 px-4 text-gray-500">{{ q.id }}</td>
+                    <td class="py-3 px-4 text-sm text-gray-600">{{ q.category }}</td>
+                    <td class="py-3 px-4 text-gray-800">{{ q.question_text[:50] }}{% if q.question_text|length > 50 %}...{% endif %}</td>
+                    <td class="py-3 px-4 text-sm text-gray-600">{{ q.answer_text[:30] }}{% if q.answer_text|length > 30 %}...{% endif %}</td>
+                    <td class="py-3 px-4 text-center">
+                        <a href="/admin/questions/{{ q.id }}/edit" class="text-blue-600 hover:underline mr-3">編集</a>
+                        <form method="POST" action="/admin/questions/{{ q.id }}/delete" class="inline"
+                            onsubmit="return confirm('本当に削除しますか？')">
+                            <button type="submit" class="text-red-600 hover:underline">削除</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

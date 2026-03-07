@@ -15,6 +15,7 @@ class User(UserMixin, db.Model):
     streak = db.Column(db.Integer, default=0)
     last_study_date = db.Column(db.Date, nullable=True)
     is_verified = db.Column(db.Boolean, default=False)
+    is_admin = db.Column(db.Boolean, default=False)
 
 class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
