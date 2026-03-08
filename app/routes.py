@@ -181,3 +181,11 @@ def study_by_category(category):
     random.shuffle(choices)
     return render_template('study.html', question=question, choices=choices, answered=False, category=category)
 
+@main.route('/privacy')
+def privacy():
+    return render_template('privacy.html')
+
+@main.route('/terms')
+def terms():
+    return render_template('terms.html')
+
