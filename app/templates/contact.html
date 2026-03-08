@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}お問い合わせ - HiDecker{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 py-10">
+  <h1 class="text-2xl font-bold text-gray-800 mb-2">お問い合わせ</h1>
+  <p class="text-gray-500 mb-8 text-sm">ご質問・ご意見・不具合のご報告などはこちらからお送りください。</p>
+
+  {% if sent %}
+  <div class="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
+    <div class="text-4xl mb-3">✅</div>
+    <p class="text-green-700 font-bold text-lg">お問い合わせを受け付けました</p>
+    <p class="text-green-600 text-sm mt-2">内容を確認の上、ご返信いたします。</p>
+    <a href="{{ url_for('main.index') }}" class="inline-block mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700">トップページへ戻る</a>
+  </div>
+
+  {% else %}
+  <form method="POST" action="{{ url_for('main.contact') }}" class="bg-white rounded-lg shadow p-6 space-y-5">
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">お名前 <span class="text-red-500">*</span></label>
+      <input type="text" name="name" required maxlength="100"
+        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+        placeholder="山田 太郎">
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">メールアドレス <span class="text-red-500">*</span></label>
+      <input type="email" name="email" required maxlength="200"
+        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+        placeholder="example@email.com">
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">お問い合わせ内容 <span class="text-red-500">*</span></label>
+      <textarea name="message" required rows="6" maxlength="2000"
+        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+        placeholder="お問い合わせ内容をご記入ください。"></textarea>
+    </div>
+
+    <p class="text-xs text-gray-500">
+      送信いただいた情報は、お問い合わせへの回答目的のみに使用します。
+      詳しくは<a href="{{ url_for('main.privacy') }}" class="text-blue-600 hover:underline">プライバシーポリシー</a>をご確認ください。
+    </p>
+
+    <button type="submit"
+      class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">
+      送信する
+    </button>
+  </form>
+  {% endif %}
+</div>
+{% endblock %}

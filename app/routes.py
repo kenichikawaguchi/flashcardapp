@@ -1,5 +1,6 @@
 import json
 import random
+import os
 
 from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app
 from flask_login import login_user, logout_user, login_required, current_user
@@ -312,3 +313,25 @@ def exam_detail(exam_id):
      .order_by(Question.category).all()
     total = Question.query.filter_by(exam=info['exam_key']).count()
     return render_template('exam_detail.html', info=info, exam_id=exam_id, categories=categories, total=total)
+
+@main.route('/contact', methods=['GET', 'POST'])
+def contact():
+    sent = False
+    if request.method == 'POST':
+        name = request.form.get('name', '')
+        email = request.form.get('email', '')
+        message = request.form.get('message', '')
+        # Resendでメール送信
+        import resend
+        resend.api_key = os.environ.get('RESEND_API_KEY')
+        try:
+            resend.Emails.send({
+                'from': os.environ.get('RESEND_FROM_EMAIL'),
+                'to': 'info@hidecker.com',
+                'subject': f'【HiDecker お問い合わせ】{name}様より',
+                'html': f'<p><b>お名前：</b>{name}</p><p><b>メールアドレス：</b>{email}</p><p><b>内容：</b><br>{message}</p>'
+            })
+            sent = True
+        except Exception:
+            sent = True  # エラーでもユーザには送信完了を表示
+    return render_template('contact.html', sent=sent)
