@@ -8,11 +8,12 @@
 </head>
 <body class="bg-gray-100 min-h-screen">
     <nav class="bg-blue-600 text-white px-6 py-4 flex justify-between items-center">
-        <a href="/" class="font-bold text-xl">📚 応用情報フラッシュカード</a>
-        <div>
+        <a href="/" class="font-bold text-xl">📚 HiDecker</a>
+        <div class="flex items-center">
             <a href="/study" class="mr-4 hover:underline">学習する</a>
             {% if current_user.is_authenticated %}
                 <a href="/dashboard" class="mr-4 hover:underline">ダッシュボード</a>
+                <span class="mr-4 text-blue-200">{{ current_user.username }} さん</span>
                 <a href="/logout" class="hover:underline">ログアウト</a>
             {% else %}
                 <a href="/login" class="mr-4 hover:underline">ログイン</a>
