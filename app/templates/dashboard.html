@@ -52,7 +52,15 @@
             <tbody>
                 {% for cat in categories %}
                 <tr class="border-b border-gray-100 hover:bg-gray-50">
-                    <td class="py-2 px-3 text-gray-800 text-sm">{{ cat.category }}</td>
+                    <td class="py-2 px-3 text-gray-800 text-sm">
+                        {% set eid = exam_id_map.get(exam, '') %}
+                        {% if eid %}
+                        <a href="/study/exam/{{ eid }}/category/{{ cat.category }}"
+                            class="text-blue-600 hover:underline">{{ cat.category }}</a>
+                        {% else %}
+                        {{ cat.category }}
+                        {% endif %}
+                    </td>
                     <td class="py-2 px-3 text-right text-blue-600 font-bold text-sm">{{ cat.q_count }}</td>
                     <td class="py-2 px-3 text-right text-gray-700 text-sm">{{ cat.total }}</td>
                     <td class="py-2 px-3 text-right text-gray-700 text-sm">{{ cat.correct }}</td>

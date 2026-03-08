@@ -145,6 +145,7 @@ def logout():
 @main.route('/dashboard')
 @login_required
 def dashboard():
+    exam_id_map = {v['exam_key']: k for k, v in EXAM_INFO.items()}
     total = UserProgress.query.filter_by(user_id=current_user.id).count()
     correct = UserProgress.query.filter_by(user_id=current_user.id, is_correct=True).count()
     accuracy = round(correct / total * 100) if total > 0 else 0
@@ -199,7 +200,8 @@ def dashboard():
         accuracy=accuracy,
         streak=current_user.streak,
         exam_stats_map=exam_stats_map,
-        exam_category_map=exam_category_map
+        exam_category_map=exam_category_map,
+        exam_id_map=exam_id_map
     )
 
 @main.route('/study/exam/<exam_id>')
