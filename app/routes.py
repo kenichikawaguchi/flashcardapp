@@ -335,3 +335,30 @@ def contact():
         except Exception:
             sent = True  # エラーでもユーザには送信完了を表示
     return render_template('contact.html', sent=sent)
+
+from flask import make_response
+
+@main.route('/sitemap.xml')
+def sitemap():
+    pages = [
+        ('https://hidecker.com/', '1.0', 'daily'),
+        ('https://hidecker.com/exam/ap', '0.8', 'weekly'),
+        ('https://hidecker.com/exam/fe', '0.8', 'weekly'),
+        ('https://hidecker.com/exam/ip', '0.8', 'weekly'),
+        ('https://hidecker.com/exam/sg', '0.8', 'weekly'),
+        ('https://hidecker.com/privacy', '0.3', 'monthly'),
+        ('https://hidecker.com/terms', '0.3', 'monthly'),
+        ('https://hidecker.com/contact', '0.3', 'monthly'),
+    ]
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    for url, priority, changefreq in pages:
+        xml += f'''  <url>
+    <loc>{url}</loc>
+    <priority>{priority}</priority>
+    <changefreq>{changefreq}</changefreq>
+  </url>\n'''
+    xml += '</urlset>'
+    response = make_response(xml)
+    response.headers['Content-Type'] = 'application/xml'
+    return response
