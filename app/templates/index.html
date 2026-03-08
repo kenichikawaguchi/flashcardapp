@@ -1,12 +1,69 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="text-center py-20">
-    <h1 class="text-4xl font-bold text-gray-800 mb-4">応用情報技術者試験</h1>
-    <p class="text-xl text-gray-600 mb-8">フラッシュカードで効率よく合格を目指そう！</p>
-    <div class="space-x-4">
-        <a href="/register" class="bg-blue-600 text-white px-8 py-3 rounded-lg text-lg hover:bg-blue-700">無料で始める</a>
-        <a href="/login" class="bg-white text-blue-600 border border-blue-600 px-8 py-3 rounded-lg text-lg hover:bg-blue-50">ログイン</a>
+<div class="max-w-4xl mx-auto">
+    <div class="text-center mb-12">
+        <h1 class="text-4xl font-bold text-gray-800 mb-4">IT資格を、楽しく学ぼう。</h1>
+        <p class="text-xl text-gray-600">フラッシュカード形式でIT資格試験を効率よく学習できます。<br>ログイン不要で今すぐ始められます！</p>
     </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+        {% for exam in exams %}
+        <a href="/exam/{{ exam.id }}" class="bg-white rounded-lg shadow hover:shadow-lg transition p-6 border-l-4
+            {% if exam.color == 'blue' %}border-blue-500
+            {% elif exam.color == 'green' %}border-green-500
+            {% elif exam.color == 'yellow' %}border-yellow-500
+            {% elif exam.color == 'red' %}border-red-500
+            {% endif %}">
+            <div class="flex justify-between items-start mb-3">
+                <h2 class="text-xl font-bold text-gray-800">{{ exam.name }}</h2>
+                <span class="text-sm px-2 py-1 rounded-full
+                    {% if exam.color == 'blue' %}bg-blue-100 text-blue-700
+                    {% elif exam.color == 'green' %}bg-green-100 text-green-700
+                    {% elif exam.color == 'yellow' %}bg-yellow-100 text-yellow-700
+                    {% elif exam.color == 'red' %}bg-red-100 text-red-700
+                    {% endif %}">
+                    {{ exam.level }}
+                </span>
+            </div>
+            <p class="text-gray-600 text-sm mb-4">{{ exam.desc }}</p>
+            <p class="text-sm font-bold
+                {% if exam.color == 'blue' %}text-blue-600
+                {% elif exam.color == 'green' %}text-green-600
+                {% elif exam.color == 'yellow' %}text-yellow-600
+                {% elif exam.color == 'red' %}text-red-600
+                {% endif %}">
+                {{ exam.count }}問収録
+            </p>
+        </a>
+        {% endfor %}
+    </div>
+
+    {% if current_user.is_authenticated %}
+    <div class="bg-blue-50 rounded-lg p-8 text-center">
+        <h3 class="text-xl font-bold text-gray-800 mb-4">📊 あなたの学習記録</h3>
+        <div class="grid grid-cols-3 gap-4">
+            <div class="bg-white rounded-lg p-4">
+                <p class="text-gray-500 text-sm mb-1">回答数</p>
+                <p class="text-3xl font-bold text-blue-600">{{ total }}</p>
+            </div>
+            <div class="bg-white rounded-lg p-4">
+                <p class="text-gray-500 text-sm mb-1">正解率</p>
+                <p class="text-3xl font-bold text-green-600">{{ accuracy }}%</p>
+            </div>
+            <div class="bg-white rounded-lg p-4">
+                <p class="text-gray-500 text-sm mb-1">ストリーク</p>
+                <p class="text-3xl font-bold text-orange-500">🔥{{ streak }}日</p>
+            </div>
+        </div>
+        <a href="/dashboard" class="inline-block mt-4 text-blue-600 hover:underline text-sm">詳細を見る →</a>
+    </div>
+    {% else %}
+    <div class="bg-blue-50 rounded-lg p-8 text-center">
+        <h3 class="text-xl font-bold text-gray-800 mb-3">学習履歴を残したい方は</h3>
+        <p class="text-gray-600 mb-6">ログインすると正解率・学習ストリーク・分野別の弱点分析が使えます。</p>
+        <a href="/register" class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 mr-4">無料で登録</a>
+        <a href="/login" class="bg-white text-blue-600 border border-blue-600 px-8 py-3 rounded-lg hover:bg-blue-50">ログイン</a>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}
-

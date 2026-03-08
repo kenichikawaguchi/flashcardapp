@@ -1,77 +1,82 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2 class="text-2xl font-bold mb-6">ダッシュボード</h2>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-    <div class="bg-white rounded-lg shadow p-6 text-center">
-        <p class="text-gray-500 mb-2">回答数</p>
-        <p class="text-4xl font-bold text-blue-600">{{ total }}</p>
-    </div>
-    <div class="bg-white rounded-lg shadow p-6 text-center">
-        <p class="text-gray-500 mb-2">正解数</p>
-        <p class="text-4xl font-bold text-green-600">{{ correct }}</p>
-    </div>
-    <div class="bg-white rounded-lg shadow p-6 text-center">
-        <p class="text-gray-500 mb-2">正解率</p>
-        <p class="text-4xl font-bold text-purple-600">{{ accuracy }}%</p>
-    </div>
-    <div class="bg-white rounded-lg shadow p-6 text-center">
-        <p class="text-gray-500 mb-2">ストリーク</p>
-        <p class="text-4xl font-bold text-orange-500">{{ streak }}日</p>
-    </div>
-</div>
+<div class="max-w-5xl mx-auto">
+    <h2 class="text-2xl font-bold mb-6">ダッシュボード</h2>
 
-<div class="bg-white rounded-lg shadow p-6 mb-8">
-    <h3 class="text-lg font-bold text-gray-800 mb-4">📚 分野別統計</h3>
-    <table class="w-full">
-        <thead>
-            <tr class="border-b-2 border-gray-200">
-                <th class="text-left py-2 px-4 text-gray-600">分野</th>
-                <th class="text-right py-2 px-4 text-gray-600">問題数</th>
-                <th class="text-right py-2 px-4 text-gray-600">回答数</th>
-                <th class="text-right py-2 px-4 text-gray-600">正答数</th>
-                <th class="text-right py-2 px-4 text-gray-600">正解率</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for category, count in category_counts %}
-            {% set stats = category_stats_map.get(category, {}) %}
-            <tr class="border-b border-gray-100 hover:bg-gray-50">
-                <td class="py-2 px-4 text-gray-800">
-                    <a href="/study/category/{{ category }}" class="text-blue-600 hover:underline">{{ category }}</a>
-                </td>
-                <td class="py-2 px-4 text-right font-bold text-blue-600">{{ count }}問</td>
-                <td class="py-2 px-4 text-right text-gray-700">{{ stats.get('total', 0) }}</td>
-                <td class="py-2 px-4 text-right text-gray-700">{{ stats.get('correct', 0) }}</td>
-                <td class="py-2 px-4 text-right">
-                    {% if stats.get('total', 0) > 0 %}
-                        {% set acc = stats.get('accuracy') %}
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white rounded-lg shadow p-6 text-center">
+            <p class="text-gray-500 mb-2">回答数</p>
+            <p class="text-4xl font-bold text-blue-600">{{ total }}</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6 text-center">
+            <p class="text-gray-500 mb-2">正解数</p>
+            <p class="text-4xl font-bold text-green-600">{{ correct }}</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6 text-center">
+            <p class="text-gray-500 mb-2">正解率</p>
+            <p class="text-4xl font-bold text-purple-600">{{ accuracy }}%</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6 text-center">
+            <p class="text-gray-500 mb-2">ストリーク</p>
+            <p class="text-4xl font-bold text-orange-500">🔥{{ streak }}日</p>
+        </div>
+    </div>
+
+    {% for exam, categories in exam_category_map.items() %}
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-bold text-gray-800">📚 {{ exam }}</h3>
+            {% if exam_stats_map.get(exam) %}
+            {% set stats = exam_stats_map[exam] %}
+            <span class="text-sm text-gray-500">
+                回答{{ stats.total }}問・正解率
+                <span class="font-bold
+                    {% if stats.accuracy >= 80 %}text-green-600
+                    {% elif stats.accuracy >= 50 %}text-yellow-600
+                    {% else %}text-red-600{% endif %}">
+                    {{ stats.accuracy }}%
+                </span>
+            </span>
+            {% endif %}
+        </div>
+        <table class="w-full">
+            <thead>
+                <tr class="border-b-2 border-gray-200">
+                    <th class="text-left py-2 px-3 text-gray-600 text-sm">分野</th>
+                    <th class="text-right py-2 px-3 text-gray-600 text-sm">問題数</th>
+                    <th class="text-right py-2 px-3 text-gray-600 text-sm">回答数</th>
+                    <th class="text-right py-2 px-3 text-gray-600 text-sm">正答数</th>
+                    <th class="text-right py-2 px-3 text-gray-600 text-sm">正解率</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cat in categories %}
+                <tr class="border-b border-gray-100 hover:bg-gray-50">
+                    <td class="py-2 px-3 text-gray-800 text-sm">{{ cat.category }}</td>
+                    <td class="py-2 px-3 text-right text-blue-600 font-bold text-sm">{{ cat.q_count }}</td>
+                    <td class="py-2 px-3 text-right text-gray-700 text-sm">{{ cat.total }}</td>
+                    <td class="py-2 px-3 text-right text-gray-700 text-sm">{{ cat.correct }}</td>
+                    <td class="py-2 px-3 text-right text-sm">
+                        {% if cat.accuracy is not none %}
                         <span class="font-bold
-                            {% if acc >= 80 %}text-green-600
-                            {% elif acc >= 50 %}text-yellow-600
+                            {% if cat.accuracy >= 80 %}text-green-600
+                            {% elif cat.accuracy >= 50 %}text-yellow-600
                             {% else %}text-red-600{% endif %}">
-                            {{ acc }}%
+                            {{ cat.accuracy }}%
                         </span>
-                    {% else %}
+                        {% else %}
                         <span class="text-gray-400">未回答</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-        <tfoot>
-            <tr class="border-t-2 border-gray-200">
-                <td class="py-2 px-4 font-bold text-gray-800">合計</td>
-                <td class="py-2 px-4 text-right font-bold text-blue-600">{{ category_counts | sum(attribute=1) }}問</td>
-                <td class="py-2 px-4 text-right font-bold text-gray-700">{{ total }}</td>
-                <td class="py-2 px-4 text-right font-bold text-gray-700">{{ correct }}</td>
-                <td class="py-2 px-4 text-right font-bold text-purple-600">{{ accuracy }}%</td>
-            </tr>
-        </tfoot>
-    </table>
-</div>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endfor %}
 
-<div class="text-center">
-    <a href="/study" class="bg-blue-600 text-white px-8 py-3 rounded-lg text-lg hover:bg-blue-700">学習を始める</a>
+    <div class="text-center">
+        <a href="/" class="bg-blue-600 text-white px-8 py-3 rounded-lg text-lg hover:bg-blue-700">学習を始める</a>
+    </div>
 </div>
 {% endblock %}
-

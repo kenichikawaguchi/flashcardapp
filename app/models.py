@@ -19,6 +19,7 @@ class User(UserMixin, db.Model):
 
 class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    exam = db.Column(db.String(50), nullable=True)
     category = db.Column(db.String(100), nullable=False)
     question_text = db.Column(db.Text, nullable=False)
     answer_text = db.Column(db.Text, nullable=False)
