@@ -1,12 +1,24 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="max-w-4xl mx-auto">
-    <div class="text-center mb-12">
+
+    <!-- ヒーロー -->
+    <div class="text-center mb-10">
         <h1 class="text-4xl font-bold text-gray-800 mb-4">IT資格を、楽しく学ぼう。</h1>
-        <p class="text-xl text-gray-600">フラッシュカード形式でIT資格試験を効率よく学習できます。<br>ログイン不要で今すぐ始められます！</p>
+        <p class="text-xl text-gray-600 mb-3">フラッシュカード形式でIT資格試験を効率よく学習できます。<br>ログイン不要で今すぐ始められます！</p>
+        <p class="text-gray-500 text-sm">ITパスポート・基本情報技術者・応用情報技術者・情報セキュリティマネジメント の4試験に対応。全511問収録。</p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+    <!-- サイト説明 -->
+    <div class="bg-white rounded-lg shadow p-8 mb-8">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">HiDeckerとは</h2>
+        <p class="text-gray-700 leading-relaxed mb-4">HiDeckerは、IPA（情報処理推進機構）が実施するIT資格試験の学習に特化した無料の問題演習サービスです。フラッシュカード形式で手軽に問題を解くことができ、スキマ時間を活用した効率的な学習が可能です。</p>
+        <p class="text-gray-700 leading-relaxed">試験区分ごと・分野ごとに問題を絞り込んで学習できるため、苦手分野の集中対策にも最適です。無料の会員登録をすると、正解率・学習ストリーク・分野別の弱点分析など学習進捗の管理機能も利用できます。</p>
+    </div>
+
+    <!-- 試験一覧 -->
+    <h2 class="text-xl font-bold text-gray-800 mb-4">対応試験一覧</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
         {% for exam in exams %}
         <a href="/exam/{{ exam.id }}" class="bg-white rounded-lg shadow hover:shadow-lg transition p-6 border-l-4
             {% if exam.color == 'blue' %}border-blue-500
@@ -15,7 +27,7 @@
             {% elif exam.color == 'red' %}border-red-500
             {% endif %}">
             <div class="flex justify-between items-start mb-3">
-                <h2 class="text-xl font-bold text-gray-800">{{ exam.name }}</h2>
+                <h3 class="text-xl font-bold text-gray-800">{{ exam.name }}</h3>
                 <span class="text-sm px-2 py-1 rounded-full
                     {% if exam.color == 'blue' %}bg-blue-100 text-blue-700
                     {% elif exam.color == 'green' %}bg-green-100 text-green-700
@@ -32,12 +44,57 @@
                 {% elif exam.color == 'yellow' %}text-yellow-600
                 {% elif exam.color == 'red' %}text-red-600
                 {% endif %}">
-                {{ exam.count }}問収録
+                {{ exam.count }}問収録 →
             </p>
         </a>
         {% endfor %}
     </div>
 
+    <!-- 特徴 -->
+    <div class="bg-white rounded-lg shadow p-8 mb-8">
+        <h2 class="text-xl font-bold text-gray-800 mb-6">HiDeckerの特徴</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="text-center">
+                <div class="text-3xl mb-3">🎴</div>
+                <h3 class="font-bold text-gray-800 mb-2">フラッシュカード形式</h3>
+                <p class="text-gray-600 text-sm">問題と解説をカード形式で表示。テンポよく学習を進められます。</p>
+            </div>
+            <div class="text-center">
+                <div class="text-3xl mb-3">📂</div>
+                <h3 class="font-bold text-gray-800 mb-2">分野別に絞り込み</h3>
+                <p class="text-gray-600 text-sm">試験区分・分野ごとに学習できるので苦手分野の集中対策に最適です。</p>
+            </div>
+            <div class="text-center">
+                <div class="text-3xl mb-3">📊</div>
+                <h3 class="font-bold text-gray-800 mb-2">学習進捗の管理</h3>
+                <p class="text-gray-600 text-sm">無料登録で正解率・ストリーク・弱点分野をグラフで確認できます。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 記事一覧 -->
+    <div class="bg-white rounded-lg shadow p-8 mb-8">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-bold text-gray-800">📝 学習お役立ち記事</h2>
+            <a href="/articles/" class="text-blue-600 hover:underline text-sm">一覧を見る →</a>
+        </div>
+        <div class="space-y-3">
+            <a href="/articles/security_crypt_pki_attacks" class="block border border-gray-200 rounded-lg px-4 py-3 hover:border-blue-400 hover:bg-blue-50 transition">
+                <p class="text-gray-800 font-medium">暗号化・PKI・主な攻撃手法をわかりやすく解説</p>
+                <p class="text-gray-500 text-sm mt-1">情報セキュリティ</p>
+            </a>
+            <a href="/articles/database_normalization_transaction_sql" class="block border border-gray-200 rounded-lg px-4 py-3 hover:border-blue-400 hover:bg-blue-50 transition">
+                <p class="text-gray-800 font-medium">データベース正規化・トランザクション・SQLの基礎</p>
+                <p class="text-gray-500 text-sm mt-1">データベース</p>
+            </a>
+            <a href="/articles/network_tcpip_routing" class="block border border-gray-200 rounded-lg px-4 py-3 hover:border-blue-400 hover:bg-blue-50 transition">
+                <p class="text-gray-800 font-medium">TCP/IP・ルーティング・ネットワーク基礎を解説</p>
+                <p class="text-gray-500 text-sm mt-1">ネットワーク</p>
+            </a>
+        </div>
+    </div>
+
+    <!-- ログイン促進 -->
     {% if current_user.is_authenticated %}
     <div class="bg-blue-50 rounded-lg p-8 text-center">
         <h3 class="text-xl font-bold text-gray-800 mb-4">📊 あなたの学習記録</h3>
