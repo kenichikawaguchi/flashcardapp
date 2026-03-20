@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="bg-white rounded-lg shadow p-8 mb-6">
+        <h1 class="text-3xl font-bold text-gray-800 mb-8">このサイトについて</h1>
+
+        <!-- 運営者情報 -->
+        <div class="flex items-start gap-6 mb-8 pb-8 border-b border-gray-200">
+            <div class="w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center text-3xl flex-shrink-0">
+                👨‍💻
+            </div>
+            <div>
+                <h2 class="text-xl font-bold text-gray-800 mb-1">Kenichi Kawaguchi</h2>
+                <p class="text-blue-600 text-sm mb-3">フリーランス Webサイトクリエーター</p>
+                <p class="text-gray-700 leading-relaxed">
+                    Webサイトの企画・設計・開発を手がけるフリーランスのWebサイトクリエーターです。
+                    応用情報技術者の知識をベースに、実務で役立つWebサービスの開発に取り組んでいます。
+                    「IT資格の学習をもっと手軽に、もっと楽しく」という思いからHiDeckerを開発しました。
+                </p>
+            </div>
+        </div>
+
+        <!-- サイトについて -->
+        <div class="mb-8 pb-8 border-b border-gray-200">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">HiDeckerについて</h2>
+            <p class="text-gray-700 leading-relaxed mb-4">
+                HiDeckerは、IPA（情報処理推進機構）が実施するIT資格試験の学習に特化した無料の問題演習サービスです。
+                ITパスポート・基本情報技術者・応用情報技術者・情報セキュリティマネジメントの4試験に対応し、
+                全511問を収録しています。
+            </p>
+            <p class="text-gray-700 leading-relaxed mb-4">
+                応用情報技術者試験の受験を目指すエンジニアの方々を応援したい、という思いがこのサービスの出発点です。
+                フラッシュカード形式でスキマ時間に手軽に学習でき、分野ごとの集中対策や弱点分析にも対応しています。
+            </p>
+            <p class="text-gray-700 leading-relaxed">
+                サービスの改善・問題の追加・機能の充実を継続的に行っています。
+                ご要望・ご意見は<a href="/contact" class="text-blue-600 hover:underline">お問い合わせフォーム</a>からお気軽にどうぞ。
+            </p>
+        </div>
+
+        <!-- 対応試験 -->
+        <div class="mb-8 pb-8 border-b border-gray-200">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">対応試験</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div class="bg-blue-50 rounded-lg p-4">
+                    <p class="font-bold text-blue-700">応用情報技術者試験</p>
+                    <p class="text-gray-600 text-sm">レベル3・全140問収録</p>
+                </div>
+                <div class="bg-green-50 rounded-lg p-4">
+                    <p class="font-bold text-green-700">基本情報技術者試験</p>
+                    <p class="text-gray-600 text-sm">レベル2・全100問収録</p>
+                </div>
+                <div class="bg-yellow-50 rounded-lg p-4">
+                    <p class="font-bold text-yellow-700">ITパスポート試験</p>
+                    <p class="text-gray-600 text-sm">レベル1・全171問収録</p>
+                </div>
+                <div class="bg-red-50 rounded-lg p-4">
+                    <p class="font-bold text-red-700">情報セキュリティマネジメント試験</p>
+                    <p class="text-gray-600 text-sm">レベル2・全100問収録</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 連絡先 -->
+        <div>
+            <h2 class="text-xl font-bold text-gray-800 mb-4">お問い合わせ</h2>
+            <p class="text-gray-700 mb-4">サービスに関するご質問・ご要望・不具合報告などはお気軽にご連絡ください。</p>
+            <p class="text-gray-700 mb-2">📧 <a href="mailto:info@hidecker.com" class="text-blue-600 hover:underline">info@hidecker.com</a></p>
+            <p class="text-gray-700">💬 <a href="/contact" class="text-blue-600 hover:underline">お問い合わせフォーム</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

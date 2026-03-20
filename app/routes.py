@@ -255,6 +255,11 @@ def answer():
 
     return render_template('study.html', question=question, choices=choices, answered=True, selected=selected, category=category, exam_id=exam_id)
 
+
+@main.route("/about")
+def about():
+    return render_template("about.html")
+
 @main.route('/privacy')
 def privacy():
     return render_template('privacy.html')
@@ -397,6 +402,7 @@ def sitemap():
         ('https://hidecker.com/privacy', '0.3', 'monthly'),
         ('https://hidecker.com/terms', '0.3', 'monthly'),
         ('https://hidecker.com/contact', '0.3', 'monthly'),
+        ('https://hidecker.com/about', '0.5', 'monthly'),
         ('https://hidecker.com/articles/', '0.8', 'weekly'),
     ] + [(f'https://hidecker.com/articles/{slug}', '0.7', 'monthly') for slug in article_slugs]
     xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
