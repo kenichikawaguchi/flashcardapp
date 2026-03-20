@@ -15,6 +15,18 @@
     <title>{% block title %}HiDecker - IT資格試験問題集｜無料で学べるフラッシュカード{% endblock %}</title>
     <meta name="description" content="{% block description %}ITパスポート・基本情報技術者・応用情報技術者・情報セキュリティマネジメントの過去問・練習問題を無料で学習できるフラッシュカードサイトです。{% endblock %}">
     <meta name="keywords" content="ITパスポート,基本情報技術者,応用情報技術者,情報セキュリティマネジメント,過去問,問題集,無料,フラッシュカード">
+    <style>
+  article h1 { font-size: 2em; font-weight: bold; margin: 1em 0 0.5em; }
+  article h2 { font-size: 1.5em; font-weight: bold; margin: 1em 0 0.5em; border-bottom: 2px solid #ccc; padding-bottom: 0.2em; }
+  article h3 { font-size: 1.2em; font-weight: bold; margin: 1em 0 0.5em; }
+  article p  { margin: 0.8em 0; line-height: 1.8; }
+  article code { background: #f4f4f4; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace; }
+  article pre { background: #f4f4f4; padding: 1em; border-radius: 5px; overflow-x: auto; }
+  article table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+  article th, article td { border: 1px solid #ddd; padding: 0.5em 1em; }
+  article th { background: #f0f0f0; }
+</style>
+
 
     <!-- OGP -->
     <meta property="og:title" content="{% block og_title %}HiDecker - IT資格試験問題集{% endblock %}">
@@ -36,6 +48,7 @@
         <a href="/" class="font-bold text-xl">📚 HiDecker</a>
         <div class="flex items-center">
             <a href="/study" class="mr-4 hover:underline">学習する</a>
+            <a href="/articles/" class="mr-4 hover:underline">記事</a>
             {% if current_user.is_authenticated %}
                 <a href="/dashboard" class="mr-4 hover:underline">ダッシュボード</a>
                 <span class="mr-4 text-blue-200">{{ current_user.username }} さん</span>

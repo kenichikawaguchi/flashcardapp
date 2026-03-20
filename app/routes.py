@@ -2,6 +2,8 @@ import json
 import random
 import os
 
+import markdown
+
 from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -204,6 +206,10 @@ def dashboard():
         exam_category_map=exam_category_map,
         exam_id_map=exam_id_map
     )
+@main.route('/study')
+def study_index():
+    return redirect(url_for('main.index'))
+
 
 @main.route('/study/exam/<exam_id>')
 def study_by_exam(exam_id):
@@ -267,6 +273,16 @@ EXAM_INFO = {
         'target': 'ITエンジニアとして3年以上の経験を持つ方、またはそれに相当する知識を持つ方',
         'schedule': '年2回（春：4月・秋：10月）',
         'fee': '7,500円',
+        'pass_rate': '約20〜25%',
+        'difficulty': '★★★★☆',
+        'overview': '応用情報技術者試験（AP）は、IPAが実施するIPA試験区分のレベル3に相当する国家試験です。午前試験（四肢択一・80問）と午後試験（記述式・11問中5問選択）の2部構成で、システム開発・ネットワーク・データベース・セキュリティ・プロジェクトマネジメント・経営戦略など幅広い分野の応用的な知識が問われます。合格すると高度試験（レベル4）の午前Ⅰ試験が2年間免除されるメリットもあります。',
+        'study_points': [
+            '午前試験は過去問の繰り返しが最も効果的。直近5年分を繰り返し解くことで合格ラインに到達しやすい',
+            '午後試験は選択問題なので、得意分野（セキュリティ・ネットワーク等）を事前に絞って集中対策する',
+            'セキュリティ分野は必須解答のため、最優先で対策する',
+            'アルゴリズムとプログラムはトレース練習を繰り返すことで得点源にできる',
+            '用語の意味を正確に理解することが午後の記述問題で得点するカギ',
+        ],
     },
     'fe': {
         'name': '基本情報技術者',
@@ -277,6 +293,16 @@ EXAM_INFO = {
         'target': 'ITエンジニアを目指す学生・社会人、IT系職種への転職を考えている方',
         'schedule': '通年（随時）',
         'fee': '7,500円',
+        'pass_rate': '約25〜30%',
+        'difficulty': '★★★☆☆',
+        'overview': '基本情報技術者試験（FE）は、IPAが実施するレベル2の国家試験です。2023年度からCBT方式（随時受験）に移行し、科目A（旧午前・60問）と科目B（旧午後・20問）の2科目構成になりました。コンピュータの基礎理論・プログラミング・アルゴリズム・ネットワーク・セキュリティ・マネジメントなどITエンジニアとして必要な基礎知識が幅広く問われます。IT系就職・転職の際に評価される定番の資格です。',
+        'study_points': [
+            '科目Aは過去問演習が中心。出題パターンが決まっているため繰り返し解くことで得点が安定する',
+            '科目BはPythonに似た疑似言語のプログラムトレースが中心。基本的なアルゴリズムを理解しておく',
+            'セキュリティ分野は毎回必出。基本的な攻撃手法と対策を確実に押さえる',
+            '2進数・16進数の変換や論理演算など、基礎計算は確実に得点できるようにする',
+            '受験機会が増えたので、早めに受験して試験の雰囲気を掴むのも有効な戦略',
+        ],
     },
     'ip': {
         'name': 'ITパスポート',
@@ -287,6 +313,16 @@ EXAM_INFO = {
         'target': 'IT系・非IT系を問わず、すべての社会人・学生',
         'schedule': '通年（随時）',
         'fee': '7,500円',
+        'pass_rate': '約50%',
+        'difficulty': '★★☆☆☆',
+        'overview': 'ITパスポート試験（iパス）は、IPAが実施するレベル1の国家試験です。CBT方式で全国随時受験が可能です。ストラテジ系（経営・マーケティング）・マネジメント系（プロジェクト管理・サービス管理）・テクノロジ系（IT基礎知識・セキュリティ）の3分野から計100問出題されます。IT系に限らず、ビジネスパーソン全般に推奨される入門資格として、学生・新社会人・ITとは無縁だった社会人にも広く受験されています。',
+        'study_points': [
+            '過去問の繰り返しが最も効果的。公式の過去問アプリも活用しよう',
+            'ストラテジ系（経営・法務）は暗記中心。用語の意味を正確に覚える',
+            'テクノロジ系は2進数や基本的なIT用語（LAN・CPU・クラウド等）を押さえる',
+            '合格ラインは総合600点以上かつ各分野300点以上の両方を満たす必要がある点に注意',
+            '学習期間の目安は1〜3ヶ月。毎日30分の過去問演習で合格圏に届きやすい',
+        ],
     },
     'sg': {
         'name': '情報セキュリティマネジメント',
@@ -297,6 +333,16 @@ EXAM_INFO = {
         'target': '情報セキュリティに関わる業務担当者、セキュリティ管理職を目指す方',
         'schedule': '通年（随時）',
         'fee': '7,500円',
+        'pass_rate': '約50〜60%',
+        'difficulty': '★★★☆☆',
+        'overview': '情報セキュリティマネジメント試験（SG）は、IPAが実施するレベル2の国家試験です。2023年度からCBT方式（随時受験）に移行しました。科目A（情報セキュリティ全般の知識・48問）と科目B（セキュリティ実践問題・12問）の2科目構成です。技術者向けではなく、企業の情報セキュリティを担うリーダー・管理職層を対象とした試験で、マルウェア対策・アクセス管理・リスクマネジメント・法令遵守など組織のセキュリティ管理に必要な知識が問われます。',
+        'study_points': [
+            '科目Aは過去問演習が効果的。セキュリティ用語（CIA・認証・暗号化等）を確実に覚える',
+            '科目Bは情報セキュリティのシナリオ問題。状況を読んで適切な対応を選ぶ練習をする',
+            'ISMSやPDCAサイクル、個人情報保護法など管理・法令系の知識も重要',
+            '攻撃手法（フィッシング・ランサムウェア・SQLインジェクション等）と対策をセットで覚える',
+            '基本情報技術者試験と学習内容が重なるため、セットで取得を目指すと効率的',
+        ],
     },
 }
 
@@ -349,6 +395,7 @@ def sitemap():
         ('https://hidecker.com/privacy', '0.3', 'monthly'),
         ('https://hidecker.com/terms', '0.3', 'monthly'),
         ('https://hidecker.com/contact', '0.3', 'monthly'),
+        ('https://hidecker.com/articles/', '0.8', 'weekly'),
     ]
     xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
     xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
@@ -362,3 +409,31 @@ def sitemap():
     response = make_response(xml)
     response.headers['Content-Type'] = 'application/xml'
     return response
+
+@main.route('/articles/')
+def article_list():
+    articles_dir = os.path.join(main.root_path, 'content', 'articles')
+    articles = []
+    for filename in sorted(os.listdir(articles_dir)):
+        if filename.endswith('.md'):
+            path = os.path.join(articles_dir, filename)
+            with open(path, encoding='utf-8') as f:
+                lines = f.readlines()
+            title = lines[0].lstrip('#').strip() if lines else filename
+            description = ''
+            for line in lines[1:]:
+                line = line.strip()
+                if line and not line.startswith('#'):
+                    description = line[:100] + '…'
+                    break
+            slug = filename[:-3]
+            articles.append({'slug': slug, 'title': title, 'description': description})
+    return render_template('article_list.html', articles=articles)
+
+@main.route('/articles/<slug>')
+def article(slug):
+    path = os.path.join(main.root_path, 'content', 'articles', f'{slug}.md')
+    with open(path, encoding='utf-8') as f:
+        content = markdown.markdown(f.read(), extensions=['tables', 'fenced_code'])
+    return render_template('article.html', content=content)
+

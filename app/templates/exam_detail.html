@@ -5,6 +5,7 @@
         <a href="/" class="text-blue-600 hover:underline">← トップページへ</a>
     </div>
 
+    <!-- ヘッダーカード -->
     <div class="bg-white rounded-lg shadow p-8 mb-6 border-l-4
         {% if info.color == 'blue' %}border-blue-500
         {% elif info.color == 'green' %}border-green-500
@@ -23,11 +24,8 @@
             </span>
         </div>
         <p class="text-gray-600 mb-6">{{ info.desc }}</p>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-            <div class="bg-gray-50 rounded p-3">
-                <p class="text-gray-500 mb-1">対象者</p>
-                <p class="text-gray-800">{{ info.target }}</p>
-            </div>
+        <!-- 1行目：数値系4項目 -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-3">
             <div class="bg-gray-50 rounded p-3">
                 <p class="text-gray-500 mb-1">試験日程</p>
                 <p class="text-gray-800">{{ info.schedule }}</p>
@@ -36,9 +34,47 @@
                 <p class="text-gray-500 mb-1">受験料</p>
                 <p class="text-gray-800">{{ info.fee }}</p>
             </div>
+            <div class="bg-gray-50 rounded p-3">
+                <p class="text-gray-500 mb-1">合格率</p>
+                <p class="text-gray-800">{{ info.pass_rate }}</p>
+            </div>
+            <div class="bg-gray-50 rounded p-3">
+                <p class="text-gray-500 mb-1">難易度</p>
+                <p class="text-gray-800">{{ info.difficulty }}</p>
+            </div>
+        </div>
+        <!-- 2行目：対象者（横幅いっぱい） -->
+        <div class="bg-gray-50 rounded p-3 text-sm">
+            <p class="text-gray-500 mb-1">対象者</p>
+            <p class="text-gray-800">{{ info.target }}</p>
         </div>
     </div>
 
+    <!-- 試験概要 -->
+    <div class="bg-white rounded-lg shadow p-8 mb-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">📋 試験概要</h2>
+        <p class="text-gray-700 leading-relaxed">{{ info.overview }}</p>
+    </div>
+
+    <!-- 学習のポイント -->
+    <div class="bg-white rounded-lg shadow p-8 mb-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">💡 学習のポイント</h2>
+        <ul class="space-y-3">
+            {% for point in info.study_points %}
+            <li class="flex items-start gap-3">
+                <span class="mt-1 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold text-white
+                    {% if info.color == 'blue' %}bg-blue-500
+                    {% elif info.color == 'green' %}bg-green-500
+                    {% elif info.color == 'yellow' %}bg-yellow-500
+                    {% elif info.color == 'red' %}bg-red-500
+                    {% endif %}">{{ loop.index }}</span>
+                <span class="text-gray-700">{{ point }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- 分野別学習 -->
     {% if total > 0 %}
     <div class="bg-white rounded-lg shadow p-8 mb-6">
         <h2 class="text-xl font-bold text-gray-800 mb-6">📚 分野から学習する</h2>
@@ -62,6 +98,7 @@
     </div>
     {% endif %}
 
+    <!-- ログイン促進 -->
     {% if not current_user.is_authenticated %}
     <div class="bg-blue-50 rounded-lg p-6 text-center">
         <p class="text-gray-700 mb-4">ログインすると学習履歴・正解率・弱点分析が使えます！</p>
