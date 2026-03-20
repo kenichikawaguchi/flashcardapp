@@ -386,6 +386,8 @@ from flask import make_response
 
 @main.route('/sitemap.xml')
 def sitemap():
+    articles_dir = os.path.join(main.root_path, 'content', 'articles')
+    article_slugs = [f[:-3] for f in sorted(os.listdir(articles_dir)) if f.endswith('.md')]
     pages = [
         ('https://hidecker.com/', '1.0', 'daily'),
         ('https://hidecker.com/exam/ap', '0.8', 'weekly'),
@@ -396,7 +398,7 @@ def sitemap():
         ('https://hidecker.com/terms', '0.3', 'monthly'),
         ('https://hidecker.com/contact', '0.3', 'monthly'),
         ('https://hidecker.com/articles/', '0.8', 'weekly'),
-    ]
+    ] + [(f'https://hidecker.com/articles/{slug}', '0.7', 'monthly') for slug in article_slugs]
     xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
     xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     for url, priority, changefreq in pages:
