@@ -436,12 +436,27 @@ def article_list():
                     break
             slug = filename[:-3]
             articles.append({'slug': slug, 'title': title, 'description': description})
-    return render_template('article_list.html', articles=articles)
+    return render_template('article_list.html', articles=articles, total=len(articles))
 
 @main.route('/articles/<slug>')
 def article(slug):
     path = os.path.join(main.root_path, 'content', 'articles', f'{slug}.md')
     with open(path, encoding='utf-8') as f:
-        content = markdown.markdown(f.read(), extensions=['tables', 'fenced_code'])
-    return render_template('article.html', content=content)
+        raw = f.read()
+    lines = raw.splitlines()
+    title = lines[0].lstrip('#').strip() if lines else slug
+    html_content = markdown.markdown(raw, extensions=['tables', 'fenced_code'])
+    # 関連記事（自分以外の全記事から最大3件）
+    articles_dir = os.path.join(main.root_path, 'content', 'articles')
+    related = []
+    for filename in sorted(os.listdir(articles_dir)):
+        if filename.endswith('.md') and filename[:-3] != slug:
+            p = os.path.join(articles_dir, filename)
+            with open(p, encoding='utf-8') as f2:
+                l = f2.readlines()
+            t = l[0].lstrip('#').strip() if l else filename
+            related.append({'slug': filename[:-3], 'title': t})
+            if len(related) >= 3:
+                break
+    return render_template('article.html', content=html_content, title=title, slug=slug, related=related)
 
