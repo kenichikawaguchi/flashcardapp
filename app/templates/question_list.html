@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ info.name }} {{ category }} 問題一覧・解説 | HiDecker{% endblock %}
+{% block description %}{{ info.name }}の{{ category }}分野の問題と解説を一覧で確認できます。全{{ questions|length }}問の問題文・選択肢・正解・解説を掲載しています。{% endblock %}
+{% block og_title %}{{ info.name }} {{ category }} 問題一覧・解説 | HiDecker{% endblock %}
+{% block og_description %}{{ info.name }}の{{ category }}分野の問題と解説を一覧で確認できます。全{{ questions|length }}問掲載。{% endblock %}
+
+{% block content %}
+<!-- JSON-LD: FAQPage構造化データ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {% for item in questions %}
+    {
+      "@type": "Question",
+      "name": {{ item.q.question_text | tojson }},
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": {{ (item.q.answer_text ~ ('。' if item.q.explanation else '') ~ (item.q.explanation or '')) | tojson }}
+      }
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ]
+}
+</script>
+
+<div class="max-w-4xl mx-auto">
+  <!-- パンくずリスト -->
+  <nav class="text-sm text-gray-500 mb-4" aria-label="パンくずリスト">
+    <ol class="flex items-center space-x-1">
+      <li><a href="/" class="hover:underline text-blue-600">ホーム</a></li>
+      <li><span class="mx-1"›</span></li>
+      <li><a href="/exam/{{ exam_id }}" class="hover:underline text-blue-600">{{ info.name }}</a></li>
+      <li><span class="mx-1"›</span></li>
+      <li class="text-gray-700">{{ category }}</li>
+    </ol>
+  </nav>
+
+  <!-- ページヘッダー -->
+  <div class="bg-white rounded-lg shadow p-6 mb-6">
+    <h1 class="text-2xl font-bold text-gray-800 mb-2">
+      {{ info.name }} ― {{ category }} 問題一覧・解説
+    </h1>
+    <p class="text-gray-600 mb-4">
+      全{{ questions|length }}問の問題文・選択肢・正解・解説を掲載しています。
+      フラッシュカード形式で実際に解いてみたい方は「練習する」ボタンをご利用ください。
+    </p>
+    <a href="/study/exam/{{ exam_id }}/category/{{ category }}"
+       class="inline-block bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 font-bold">
+      🎴 フラッシュカードで練習する（{{ questions|length }}問）
+    </a>
+  </div>
+
+  <!-- 問題一覧 -->
+  {% for item in questions %}
+  <div class="bg-white rounded-lg shadow p-6 mb-5" id="q{{ loop.index }}">
+    <div class="flex items-start justify-between mb-3">
+      <span class="text-xs font-bold text-white bg-blue-500 rounded-full px-3 py-1">
+        問題 {{ loop.index }}
+      </span>
+      <a href="/question/{{ item.q.id }}" class="text-xs text-blue-500 hover:underline">
+        この問題のページ →
+      </a>
+    </div>
+
+    <!-- 問題文 -->
+    <p class="text-gray-800 font-semibold text-lg mb-4 leading-relaxed">
+      {{ item.q.question_text }}
+    </p>
+
+    <!-- 選択肢 -->
+    <div class="space-y-2 mb-4">
+      {% for choice in item.choices %}
+      <div class="border-2 rounded-lg px-4 py-2.5
+          {% if choice == item.q.answer_text %}
+            border-green-500 bg-green-50
+          {% else %}
+            border-gray-200 bg-gray-50
+          {% endif %}">
+        <span class="font-bold text-gray-500 mr-2">{{ loop.index }}.</span>
+        <span class="text-gray-800">{{ choice }}</span>
+        {% if choice == item.q.answer_text %}
+          <span class="ml-2 text-green-700 font-bold text-sm">✓ 正解</span>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- 解説 -->
+    {% if item.q.explanation %}
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <p class="font-bold text-blue-800 mb-1 text-sm">📝 解説</p>
+      <p class="text-gray-800 leading-relaxed">{{ item.q.explanation }}</p>
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+
+  <!-- フッターCTA -->
+  <div class="bg-white rounded-lg shadow p-6 text-center mt-4">
+    <p class="text-gray-700 mb-4 font-semibold">
+      問題を読んだら、フラッシュカードで実際に解いて定着させましょう！
+    </p>
+    <a href="/study/exam/{{ exam_id }}/category/{{ category }}"
+       class="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 font-bold text-lg">
+      🎴 {{ category }} を練習する
+    </a>
+    <p class="mt-4">
+      <a href="/exam/{{ exam_id }}" class="text-blue-500 hover:underline text-sm">
+        ← {{ info.name }} トップに戻る
+      </a>
+    </p>
+  </div>
+</div>
+{% endblock %}

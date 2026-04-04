@@ -351,6 +351,58 @@ EXAM_INFO = {
     },
 }
 
+@main.route('/questions/<exam_id>/<category>')
+def question_list(exam_id, category):
+    """カテゴリ内の全問題+解説を静的HTMLで表示するSEO向けページ"""
+    if exam_id not in EXAM_INFO:
+        return redirect(url_for('main.index'))
+    info = EXAM_INFO[exam_id]
+    questions_raw = Question.query.filter_by(
+        exam=info['exam_key'], category=category
+    ).order_by(Question.id).all()
+    # choicesをパースしてattachする
+    questions = []
+    for q in questions_raw:
+        choices = json.loads(q.choices) if q.choices else []
+        questions.append({'q': q, 'choices': choices})
+    if not questions:
+        return redirect(url_for('main.exam_detail', exam_id=exam_id))
+    return render_template(
+        'question_list.html',
+        questions=questions,
+        category=category,
+        exam_id=exam_id,
+        info=info
+    )
+
+
+@main.route('/question/<int:question_id>')
+def question_detail(question_id):
+    """個別問題の詳細ページ（問題文・選択肢・正解・解説をすべて静的表示）"""
+    question = Question.query.get_or_404(question_id)
+    choices = json.loads(question.choices) if question.choices else []
+    # 同じカテゴリの前後問題を取得
+    same_cat = Question.query.filter_by(
+        exam=question.exam, category=question.category
+    ).order_by(Question.id).all()
+    ids = [q.id for q in same_cat]
+    idx = ids.index(question_id) if question_id in ids else -1
+    prev_q = same_cat[idx - 1] if idx > 0 else None
+    next_q = same_cat[idx + 1] if idx >= 0 and idx < len(same_cat) - 1 else None
+    # exam_idを逆引き
+    exam_key_to_id = {v['exam_key']: k for k, v in EXAM_INFO.items()}
+    exam_id = exam_key_to_id.get(question.exam, '')
+    return render_template(
+        'question_detail.html',
+        question=question,
+        choices=choices,
+        exam_id=exam_id,
+        prev_q=prev_q,
+        next_q=next_q,
+        info=EXAM_INFO.get(exam_id, {})
+    )
+
+
 @main.route('/exam/<exam_id>')
 def exam_detail(exam_id):
     if exam_id not in EXAM_INFO:
@@ -393,6 +445,16 @@ from flask import make_response
 def sitemap():
     articles_dir = os.path.join(main.root_path, 'content', 'articles')
     article_slugs = [f[:-3] for f in sorted(os.listdir(articles_dir)) if f.endswith('.md')]
+    from urllib.parse import quote
+    category_pages = []
+    for eid, edata in EXAM_INFO.items():
+        cats = db.session.query(Question.category).filter_by(
+            exam=edata['exam_key']
+        ).distinct().all()
+        for (cat,) in cats:
+            category_pages.append(
+                (f'https://hidecker.com/questions/{eid}/{quote(cat)}', '0.8', 'monthly')
+            )
     pages = [
         ('https://hidecker.com/', '1.0', 'daily'),
         ('https://hidecker.com/exam/ap', '0.8', 'weekly'),
@@ -404,7 +466,8 @@ def sitemap():
         ('https://hidecker.com/contact', '0.3', 'monthly'),
         ('https://hidecker.com/about', '0.5', 'monthly'),
         ('https://hidecker.com/articles/', '0.8', 'weekly'),
-    ] + [(f'https://hidecker.com/articles/{slug}', '0.7', 'monthly') for slug in article_slugs]
+    ] + [(f'https://hidecker.com/articles/{slug}', '0.7', 'monthly') for slug in article_slugs] \
+      + category_pages
     xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
     xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     for url, priority, changefreq in pages:

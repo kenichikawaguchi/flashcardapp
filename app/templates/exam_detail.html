@@ -80,11 +80,23 @@
         <h2 class="text-xl font-bold text-gray-800 mb-6">📚 分野から学習する</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
             {% for category, count in categories %}
-            <a href="/study/exam/{{ exam_id }}/category/{{ category }}"
-                class="flex justify-between items-center border border-gray-200 rounded-lg px-4 py-3 hover:border-blue-400 hover:bg-blue-50 transition">
-                <span class="text-gray-800">{{ category }}</span>
-                <span class="text-sm text-blue-600 font-bold">{{ count }}問</span>
-            </a>
+            <div class="border border-gray-200 rounded-lg px-4 py-3 hover:border-blue-400 hover:bg-blue-50 transition">
+                <a href="/questions/{{ exam_id }}/{{ category }}"
+                   class="block text-gray-800 font-semibold mb-1">
+                    {{ category }}
+                    <span class="text-sm text-blue-600 font-bold ml-1">{{ count }}問</span>
+                </a>
+                <div class="flex gap-3 text-sm">
+                    <a href="/questions/{{ exam_id }}/{{ category }}"
+                       class="text-gray-500 hover:text-blue-600 hover:underline">
+                        📖 問題・解説を読む
+                    </a>
+                    <a href="/study/exam/{{ exam_id }}/category/{{ category }}"
+                       class="text-gray-500 hover:text-blue-600 hover:underline">
+                        🎴 練習する
+                    </a>
+                </div>
+            </div>
             {% endfor %}
         </div>
         <a href="/study/exam/{{ exam_id }}"
