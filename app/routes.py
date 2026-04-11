@@ -12,7 +12,7 @@ from app.models import User, Question, UserProgress
 from sqlalchemy import func
 from itsdangerous import URLSafeTimedSerializer
 import resend
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 
 
 main = Blueprint('main', __name__)
@@ -509,7 +509,7 @@ def article_list():
 def article(slug):
     path = os.path.join(main.root_path, 'content', 'articles', f'{slug}.md')
     mtime = os.path.getmtime(path)
-    published_date = datetime.datetime.fromtimestamp(mtime).strftime('%Y年%-m月%-d日')
+    published_date = datetime.fromtimestamp(mtime).strftime('%Y年%-m月%-d日')
     with open(path, encoding='utf-8') as f:
         raw = f.read()
     lines = raw.splitlines()
