@@ -484,9 +484,14 @@ def sitemap():
 @main.route('/articles/')
 def article_list():
     articles_dir = os.path.join(main.root_path, 'content', 'articles')
+    series = request.args.get('series')
     articles = []
     for filename in sorted(os.listdir(articles_dir)):
+
         if filename.endswith('.md'):
+            slug = filename[:-3]
+            if series and not slug.startswith(series + '_'):  # ← 追加
+                continue
             path = os.path.join(articles_dir, filename)
             with open(path, encoding='utf-8') as f:
                 lines = f.readlines()
@@ -497,7 +502,6 @@ def article_list():
                 if line and not line.startswith('#'):
                     description = line[:100] + '…'
                     break
-            slug = filename[:-3]
             articles.append({'slug': slug, 'title': title, 'description': description})
     return render_template('article_list.html', articles=articles, total=len(articles))
 
