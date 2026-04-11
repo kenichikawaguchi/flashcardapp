@@ -510,7 +510,6 @@ def article(slug):
     path = os.path.join(main.root_path, 'content', 'articles', f'{slug}.md')
     mtime = os.path.getmtime(path)
     published_date = datetime.fromtimestamp(mtime).strftime('%Y年%-m月%-d日')
-    current_app.logger.info(f"DEBUG published_date: '{published_date}' mtime: {mtime}")
     with open(path, encoding='utf-8') as f:
         raw = f.read()
     lines = raw.splitlines()
@@ -528,5 +527,5 @@ def article(slug):
             related.append({'slug': filename[:-3], 'title': t})
             if len(related) >= 3:
                 break
-    return render_template('article.html', content=html_content, title=title, slug=slug, related=related)
+    return render_template('article.html', content=html_content, title=title, slug=slug, related=related, published_date=published_date)
 
