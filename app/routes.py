@@ -507,9 +507,9 @@ def article_list():
 
 @main.route('/articles/<slug>')
 def article(slug):
+    path = os.path.join(main.root_path, 'content', 'articles', f'{slug}.md')
     mtime = os.path.getmtime(path)
     published_date = datetime.datetime.fromtimestamp(mtime).strftime('%Y年%-m月%-d日')
-    path = os.path.join(main.root_path, 'content', 'articles', f'{slug}.md')
     with open(path, encoding='utf-8') as f:
         raw = f.read()
     lines = raw.splitlines()
